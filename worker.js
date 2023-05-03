@@ -12,7 +12,7 @@ const intervalDataHour = process.env.TIMEHOUR_GETDATA;
 start();
 async function start(){
   postgresHelper.sequelize.authenticate().then(() =>{
-    cron.schedule(`0 13 * * *`, function () {
+    cron.schedule(`30 11 * * *`, function () {
       let flag = fs.readFileSync('./band.json', 'utf-8')
       if(flag === "true"){
         entriesDepartures.taskEntriesDepartures();
