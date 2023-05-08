@@ -12,18 +12,28 @@ const intervalDataHour = process.env.TIMEHOUR_GETDATA;
 start();
 async function start(){
   postgresHelper.sequelize.authenticate().then(() =>{
-    cron.schedule(`30 11 * * *`, function () {
+    cron.schedule(`0 6 * * *`, async () => {
       let flag = fs.readFileSync('./band.json', 'utf-8')
       if(flag === "true"){
-        entriesDepartures.taskEntriesDepartures();
+        // entriesDepartures.taskEntriesDepartures();
+        taskEntries();
           }
     },{
       scheduled: true,
       timezone: "America/Mexico_City"
-    });
+    })
 
   }).catch((err) => {
     console.log(err.message),
     //(`Error ocurred in method initial, check now; ${err.message}`),
     logger.errorLoggerBD.error(err.message)});
+}
+
+async function taskEntries(){
+  try {
+      await entriesDepartures.taskEntriesDepartures();
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }

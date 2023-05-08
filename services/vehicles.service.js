@@ -2,7 +2,7 @@ const _ = require("lodash");
 const { vehicles } = require("../repositories/index.repository");
 const moment = require("moment");
 
-const taskEntriesDepartures = async () => {
+
 const devicesId = [
     "b621",
     "b60A",
@@ -39,13 +39,14 @@ const devicesId = [
     "b608",
 ];
 
-let info = "";
+// let info = "";
 let dateEntrie = "";
 let dateDeparture = "";
 let identifier = "";
 let duration = "";
 let subtraction = "";
 const fecha = moment();
+let deviceId= "";
 
 const date = fecha.subtract(1, 'days');
 const fecha_consulta = date.format('YYYY-MM-DD');
@@ -56,8 +57,11 @@ const data = {
     date: "",
 };
 const deviceArray = [];
+
+
+async function taskEntriesDepartures() {
 for (const devices of devicesId) {
-    info = await vehicles.getTestSubtraction(devices, fecha_consulta);
+    let info = await vehicles.getTestSubtraction(devices, fecha_consulta);
     let array = info[0].subtraction_by_device;
 
     if (array.data) {
@@ -65,24 +69,25 @@ for (const devices of devicesId) {
         if (res.type == "entrie") {
             dateEntrie = moment(res.ActiveFrom);
             identifier = res.identifier;
+            deviceId = res.DeviceId;
         } else {
-            if (dateEntrie != "" && identifier != "") {
-            if (res.identifier == identifier) {
-                dateDeparture = moment(res.ActiveFrom);
-                duration = moment.duration(dateDeparture.diff(dateEntrie));
-                subtraction = moment.utc(duration.asMilliseconds()).format('HH:mm:ss.SSS');
-                const insert = await vehicles.addDurationEntriesDepartures(res.DeviceId, subtraction, fecha_consulta);
-                data.DeviceId = res.DeviceId;
-                data.duration = subtraction;
-                data.date = moment(res.ActiveFrom).format("YYYY-MM-DD");
-                const resume = { ...data };
-                deviceArray.push(resume);
-                (identifier = ""),
-                (dateEntrie = ""),
-                (dateDeparture = ""),
-                (duration = ""),
-                (subtraction = "");
-            }
+            if (dateEntrie != "" && identifier != "" && deviceId == res.DeviceId) {
+                if (res.identifier == identifier) {
+                    dateDeparture = moment(res.ActiveFrom);
+                    duration = moment.duration(dateDeparture.diff(dateEntrie));
+                    subtraction = moment.utc(duration.asMilliseconds()).format('HH:mm:ss.SSS');
+                    const insert = await vehicles.addDurationEntriesDepartures(res.DeviceId, subtraction, fecha_consulta);
+                    data.DeviceId = res.DeviceId;
+                    data.duration = subtraction;
+                    data.date = moment(res.ActiveFrom).format("YYYY-MM-DD");
+                    const resume = { ...data };
+                    deviceArray.push(resume);
+                    identifier = "";
+                    dateEntrie = "";
+                    dateDeparture = "";
+                    duration = "";
+                    subtraction = "";
+                }
             }
         }
         }
