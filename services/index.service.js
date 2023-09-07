@@ -1,5 +1,7 @@
-const entDepVehicles = require('./vehicles.service');
+const entDepVehiclesServices = require('./vehicles.service');
+const sendEmail = require('./sendEmail.service');
 
 module.exports = {
-    entDepVehicles
+    entDepVehiclesServices,
+    sendEmail
 }

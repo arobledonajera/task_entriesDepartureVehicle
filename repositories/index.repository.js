@@ -1,5 +1,5 @@
-const vehicles = require('./vehicles.repository');
+const entDepVehiclesRepository = require('./vehicles.repository');
 
 module.exports = {
-    vehicles
+    entDepVehiclesRepository
 }
