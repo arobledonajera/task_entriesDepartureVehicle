@@ -7,6 +7,7 @@ require("dotenv").config();
 
 //let today = moment();
 const taskEntriesDepartures = async () => {
+  //Validamos credenciales de Geotab
   const isValid = await geotabApi.validateCredentials({
     userName: process.env.GEOTAB_USER,
     password: process.env.GEOTAB_PASSWORD,
@@ -14,26 +15,19 @@ const taskEntriesDepartures = async () => {
     server: process.env.GEOTAB_SERVER,
     sessionId: process.env.GEOTAB_SESSIONID,
   });
+  //Obtenemos los devices directo de Geotab
   const geotabDevices = await geotabApi.getDevices(process.env.GEOTAB_GROUPID);
+  console.log(`Devices Length: ${geotabDevices.length}`);
 
-  let info = "";
-  let dateEntrie = "";
-  let dateDeparture = "";
-  let identifier = "";
-  let duration = "";
-  let subtraction = "";
-  const today = moment();
+  let info = "",
+    dateEntrie = "",
+    dateDeparture = "";
+  (identifier = ""), (duration = ""), (subtraction = "");
   let deviceId = "";
+  const today = moment();
   const date = today.subtract(1, "days");
-
   const date_query = date.format("YYYY-MM-DD");
 
-  const data = {
-    DeviceId: "",
-    duration: "",
-    date: "",
-  };
-  //const deviceArray = [];
   for (const devices of geotabDevices) {
     info = await entDepVehiclesServices.getTestSubtraction(devices, date_query);
     let array = info[0].subtraction_by_device_v3;
@@ -67,11 +61,6 @@ const taskEntriesDepartures = async () => {
                   subtraction,
                   date_query
                 );
-            //   data.DeviceId = res.DeviceId;
-            //   data.duration = subtraction;
-            //   data.date = moment(res.ActiveFrom).format("YYYY-MM-DD");
-              // const resume = { ...data };
-              // deviceArray.push(resume);
               (identifier = ""),
                 (dateEntrie = ""),
                 (dateDeparture = ""),
@@ -83,8 +72,6 @@ const taskEntriesDepartures = async () => {
       }
     }
   }
-
-  console.log("Tarea terminada");
   return;
 };
 module.exports = {
