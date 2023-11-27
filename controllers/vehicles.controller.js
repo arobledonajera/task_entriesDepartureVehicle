@@ -30,7 +30,7 @@ const taskEntriesDepartures = async () => {
 
   for (const devices of geotabDevices) {
     info = await entDepVehiclesServices.getTestSubtraction(devices, date_query);
-    let array = info[0].subtraction_by_device_v3;
+    let array = process.env.IS_GRUPOBIMBO === "true" ? info[0].subtraction_by_device_v3 : info[0].subtraction_by_device_v2;
 
     if (array.data) {
       for (let res of array.data) {
